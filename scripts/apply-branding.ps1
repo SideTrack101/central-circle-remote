@@ -8,11 +8,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 function Replace-Literal {
-    param(
-        [string]$Path,
-        [string]$Old,
-        [string]$New
-    )
+    param([string]$Path, [string]$Old, [string]$New)
 
     if (-not (Test-Path $Path)) {
         throw "Required source file not found: $Path"
@@ -34,8 +30,9 @@ $iconTarget = Join-Path $source "flutter\windows\runner\resources\app_icon.ico"
 Copy-Item $iconSource $iconTarget -Force
 
 $runnerResource = Join-Path $source "flutter\windows\runner\Runner.rc"
+Replace-Literal $runnerResource 'VALUE "CompanyName", "Purslane Tech Pte. Ltd."' 'VALUE "CompanyName", "Central Circle"'
+Replace-Literal $runnerResource 'VALUE "FileDescription", "RustDesk Remote Desktop"' 'VALUE "FileDescription", "Central Circle Remote Support"'
 Replace-Literal $runnerResource 'VALUE "ProductName", "RustDesk"' 'VALUE "ProductName", "Central Circle Remote"'
-Replace-Literal $runnerResource 'VALUE "FileDescription", "RustDesk"' 'VALUE "FileDescription", "Central Circle Remote"'
 Replace-Literal $runnerResource 'Copyright © 2026 Purslane Tech Pte. Ltd. All rights reserved.' 'Copyright © 2026 Central Circle. Open-source components retain their original licences.'
 
 $cargoManifest = Join-Path $source "Cargo.toml"
