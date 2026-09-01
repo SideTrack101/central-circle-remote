@@ -26,8 +26,19 @@ $source = (Resolve-Path $SourcePath).Path
 $branding = (Resolve-Path $BrandingPath).Path
 
 $iconSource = Join-Path $branding "windows\app.ico"
+$logoSource = Join-Path $branding "windows\central-circle-remote.png"
 $iconTarget = Join-Path $source "flutter\windows\runner\resources\app_icon.ico"
+$flutterAssets = Join-Path $source "flutter\assets"
+
+if (-not (Test-Path $iconSource)) { throw "Windows icon is missing: $iconSource" }
+if (-not (Test-Path $logoSource)) { throw "Flutter logo is missing: $logoSource" }
+
+New-Item -ItemType Directory -Force -Path $flutterAssets | Out-Null
 Copy-Item $iconSource $iconTarget -Force
+Copy-Item $logoSource (Join-Path $flutterAssets "logo.png") -Force
+Copy-Item $logoSource (Join-Path $flutterAssets "logo_light.png") -Force
+Copy-Item $logoSource (Join-Path $flutterAssets "logo_dark.png") -Force
+Copy-Item $logoSource (Join-Path $flutterAssets "icon.png") -Force
 
 $runnerResource = Join-Path $source "flutter\windows\runner\Runner.rc"
 Replace-Literal $runnerResource 'VALUE "CompanyName", "Purslane Tech Pte. Ltd."' 'VALUE "CompanyName", "Central Circle"'
@@ -43,4 +54,7 @@ $portableManifest = Join-Path $source "libs\portable\Cargo.toml"
 Replace-Literal $portableManifest 'ProductName = "RustDesk"' 'ProductName = "Central Circle Remote"'
 Replace-Literal $portableManifest 'FileDescription = "RustDesk Remote Desktop"' 'FileDescription = "Central Circle Remote Support"'
 
-Write-Host "Central Circle branding applied successfully."
+$sharedConfig = Join-Path $source "libs\hbb_common\src\config.rs"
+Replace-Literal $sharedConfig 'pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());' 'pub static ref APP_NAME: RwLock<String> = RwLock::new("Central Circle Remote".to_owned());'
+
+Write-Host "Central Circle UI logo, application name, icon and Windows metadata applied successfully."
