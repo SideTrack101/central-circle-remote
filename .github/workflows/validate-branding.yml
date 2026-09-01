@@ -1,0 +1,63 @@
+name: Validate branded Windows source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "branding/**"
+      - "scripts/apply-branding.ps1"
+      - ".github/workflows/validate-branding.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-branding:
+    runs-on: windows-2022
+
+    steps:
+      - name: Check out Central Circle overlay
+        uses: actions/checkout@v4
+        with:
+          path: central-circle
+
+      - name: Check out pinned remote-desktop source
+        uses: actions/checkout@v4
+        with:
+          repository: rustdesk/rustdesk
+          ref: "1.4.9"
+          submodules: recursive
+          path: upstream
+
+      - name: Apply Central Circle branding
+        shell: pwsh
+        run: |
+          ./central-circle/scripts/apply-branding.ps1 `
+            -SourcePath ./upstream `
+            -BrandingPath ./central-circle/branding
+
+      - name: Verify branded metadata and icon
+        shell: pwsh
+        run: |
+          $resource = Get-Content ./upstream/flutter/windows/runner/Runner.rc -Raw
+          $cargo = Get-Content ./upstream/Cargo.toml -Raw
+          if ($resource -notmatch "Central Circle Remote") {
+            throw "Windows metadata was not branded"
+          }
+          if ($cargo -notmatch "Central Circle Remote Support") {
+            throw "Cargo metadata was not branded"
+          }
+          if (-not (Test-Path ./upstream/flutter/windows/runner/resources/app_icon.ico)) {
+            throw "Windows icon is missing"
+          }
+
+      - name: Upload validated branding overlay
+        uses: actions/upload-artifact@v4
+        with:
+          name: central-circle-branding-overlay
+          path: |
+            upstream/flutter/windows/runner/Runner.rc
+            upstream/flutter/windows/runner/resources/app_icon.ico
+            upstream/Cargo.toml
+            upstream/libs/portable/Cargo.toml
+          retention-days: 14
