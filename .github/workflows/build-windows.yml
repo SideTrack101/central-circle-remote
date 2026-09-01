@@ -14,4 +14,4 @@ jobs:
     uses: ./.github/workflows/windows-build-engine.yml
     with:
       upload-artifact: true
-      upload-tag: "central-circle-remote-1.0.0"
+      upload-tag: "central-circle-remote-1.0.1"
