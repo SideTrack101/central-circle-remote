@@ -1,0 +1,46 @@
+name: Test remote server domain
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/test-server-domain.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-domain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Verify DNS
+        shell: bash
+        run: |
+          if getent ahostsv4 view.centralcircle.co.za >/dev/null; then
+            echo "DNS_RESULT=PASS" >> "$GITHUB_ENV"
+            echo "DNS resolution: PASS"
+          else
+            echo "DNS resolution: FAIL"
+            exit 1
+          fi
+
+      - name: Test remote-desktop TCP ports
+        shell: bash
+        run: |
+          failed=0
+          for port in 21115 21116 21117 21118 21119; do
+            if timeout 8 bash -c ">/dev/tcp/view.centralcircle.co.za/$port" 2>/dev/null; then
+              echo "TCP $port: OPEN"
+            else
+              echo "TCP $port: CLOSED OR FILTERED"
+              failed=1
+            fi
+          done
+          exit "$failed"
+
+      - name: Note UDP requirement
+        shell: bash
+        run: |
+          echo "UDP 21116 cannot be conclusively verified by a stateless CI probe."
