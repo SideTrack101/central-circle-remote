@@ -1,0 +1,15 @@
+{
+  "productName": "Central Circle Remote",
+  "publisher": "Central Circle",
+  "website": "https://www.centralcircle.co.za",
+  "colors": {
+    "primary": "#0B4FC4",
+    "background": "#05070A",
+    "surface": "#FFFFFF",
+    "accent": "#24A9E0"
+  },
+  "assets": {
+    "sourceLogo": "branding/Central Circle Logo(3).jpg",
+    "windowsIcon": "branding/windows/app.ico"
+  }
+}
