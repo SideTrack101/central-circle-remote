@@ -126,6 +126,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path .central-circle/branding/windows | Out-Null
           Invoke-WebRequest -Uri "https://raw.githubusercontent.com/SideTrack101/central-circle-remote/main/scripts/apply-branding.ps1" -OutFile ".central-circle/apply-branding.ps1"
           Invoke-WebRequest -Uri "https://raw.githubusercontent.com/SideTrack101/central-circle-remote/main/branding/windows/app.ico" -OutFile ".central-circle/branding/windows/app.ico"
+          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/SideTrack101/central-circle-remote/main/branding/windows/central-circle-remote.png" -OutFile ".central-circle/branding/windows/central-circle-remote.png"
           & ".central-circle/apply-branding.ps1" -SourcePath "." -BrandingPath ".central-circle/branding"
 
       - name: Restore bridge files
