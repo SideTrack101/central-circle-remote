@@ -1,0 +1,8 @@
+{
+  "upstreamVersion": "1.4.9",
+  "productName": "Central Circle Remote",
+  "rendezvousServer": "view.centralcircle.co.za",
+  "relayServer": "view.centralcircle.co.za",
+  "serverPublicKey": "X34r6qeG2cYR6s0XvikJkjIvlTF1ksPE5HoabMs3ziI=",
+  "apiServer": null
+}
